@@ -1,0 +1,152 @@
+Sub AnotherTest()
+
+Dim before_date As Double
+Dim after_date As Long
+Dim open_date As Double
+Dim close_date As Double
+Dim open_price As Double
+Dim close_price As Double
+Dim LastRow As Double
+Dim Rows_Add As Integer
+Dim total_volume As Double
+Dim WS As Worksheet
+
+For Each WS In Worksheets
+
+    WS.Cells(1, "I").Value = "Ticker"
+    WS.Cells(1, "J").Value = "Yearly Change"
+    WS.Cells(1, "K").Value = "Percent Change"
+    WS.Cells(1, "L").Value = "Total Stock Volume"
+    WS.Cells(1, "O").Value = "Ticker"
+    WS.Cells(1, "P").Value = "Value"
+    WS.Cells(2, "N").Value = "Greatest % Increase"
+    WS.Cells(3, "N").Value = "Greatest % Decrease"
+    WS.Cells(4, "N").Value = "Greatest Total Volume"
+
+
+
+
+WS.Activate
+
+LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+Rows_Add = 2
+
+'1. loop thru the worksheets
+'2. split date / so it can use different years
+'3. how to create an array and find the Upper Bound
+'How to Upload on GitHub / GitLab
+
+Dim firstrow As Long
+firstrow = 2
+
+Dim yearly_change As Double
+Dim opening_value As Double
+Dim closing_value As Double
+Dim percentage_change As Double
+
+
+LastRow = Cells(Rows.Count, 1).End(xlUp).Row
+Rows_Add = 2
+
+For i = 2 To LastRow
+
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        TICKER = Cells(i, 1).Value
+        Range("i" & Rows_Add).Value = TICKER
+        opening_value = Cells(firstrow, 3).Value
+        closing_value = Cells(i, 6).Value
+        yearly_change = closing_value - opening_value
+        percentage_change = yearly_change / opening_value
+        
+        
+        Range("J" & Rows_Add).Value = yearly_change
+        
+        Range("K" & Rows_Add).Value = percentage_change
+        Range("K" & Rows_Add).NumberFormat = "0.00%"
+    
+        If yearly_change > 0 Then
+           Range("J" & Rows_Add).Interior.ColorIndex = 4
+        Else
+            Range("J" & Rows_Add).Interior.ColorIndex = 3
+        End If
+        
+        If percentage_change > 0 Then
+            Range("K" & Rows_Add).Interior.ColorIndex = 4
+        Else
+            Range("K" & Rows_Add).Interior.ColorIndex = 3
+        End If
+        
+        firstrow = i + 1
+
+        total_volume = total_volume + Cells(i, 7).Value
+        Range("L" & Rows_Add).Value = total_volume
+        total_volume = 0
+        
+        Rows_Add = Rows_Add + 1
+        
+        Else
+        
+        total_volume = total_volume + Cells(i, 7).Value
+            
+        End If
+
+Next i
+
+
+Dim percent_change As Variant
+Dim max_ As Double
+Dim Ticker_max As String
+Dim min_ As Double
+Dim Ticker_min As String
+Dim max_vol As Double
+Dim ticker_max_vol As String
+
+
+max_ = 0
+min_ = 0
+max_vol = 0
+
+LastRow = Cells(Rows.Count, "K").End(xlUp).Row
+
+For i = 2 To LastRow
+    
+    If Cells(i, "K").Value > max_ Then
+    max_ = Cells(i, "K").Value
+    Ticker_max = Cells(i, "i").Value
+    End If
+    
+    If Cells(i, "K").Value < min_ Then
+    min_ = Cells(i, "K").Value
+    Ticker_min = Cells(i, "i").Value
+    End If
+    
+    If Cells(i, "L").Value > max_vol Then
+    max_vol = Cells(i, "L").Value
+    ticker_max_vol = Cells(i, "i").Value
+    End If
+    
+    
+    
+Next i
+
+Cells(2, "P").Value = max_
+Cells(2, "O").Value = Ticker_max
+Cells(2, "P").NumberFormat = "0.00%"
+
+Cells(3, "P").Value = min_
+Cells(3, "O").Value = Ticker_min
+Cells(3, "P").NumberFormat = "0.00%"
+
+Cells(4, "P").Value = max_vol
+Cells(4, "O").Value = ticker_max_vol
+
+Next WS
+
+End Sub
+
+
+
+
+
+
+
